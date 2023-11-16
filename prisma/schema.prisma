@@ -45,3 +45,15 @@ model Customer {
 
   @@map("customers")
 }
+
+model Product {
+  id          Int      @id @unique @default(autoincrement())
+  name        String
+  description String   @db.VarChar(255)
+  price       Decimal
+  amount      Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now())
+
+  @@map("products")
+}
