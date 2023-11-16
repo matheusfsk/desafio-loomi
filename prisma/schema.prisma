@@ -48,13 +48,14 @@ model Customer {
 }
 
 model Product {
-  id          Int      @id @unique @default(autoincrement())
+  id          Int         @id @unique @default(autoincrement())
   name        String
-  description String   @db.VarChar(255)
+  description String      @db.VarChar(255)
   price       Decimal
   amount      Int
-  created_at  DateTime @default(now())
-  updated_at  DateTime @default(now())
+  created_at  DateTime    @default(now())
+  updated_at  DateTime    @default(now())
+  OrderItem   OrderItem[]
 
   @@map("products")
 }
@@ -66,6 +67,20 @@ model Order {
   order_status OrderStatus
   created_at   DateTime    @default(now())
   updated_at   DateTime    @default(now())
+  OrderItem    OrderItem[]
 
   @@map("orders")
+}
+
+model OrderItem {
+  id         Int     @id @unique @default(autoincrement())
+  order_id   Int
+  order      Order   @relation(fields: [order_id], references: [id])
+  product_id Int
+  product    Product @relation(fields: [product_id], references: [id])
+  amount     Int
+  price      Decimal
+  subtotal   Decimal
+
+  @@map("order_items")
 }
