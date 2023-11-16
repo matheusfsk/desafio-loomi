@@ -42,6 +42,7 @@ model Customer {
   status     Boolean
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
+  Order      Order[]
 
   @@map("customers")
 }
@@ -56,4 +57,15 @@ model Product {
   updated_at  DateTime @default(now())
 
   @@map("products")
+}
+
+model Order {
+  id           Int         @id @unique @default(autoincrement())
+  customer_id  Int
+  customer     Customer    @relation(fields: [customer_id], references: [id])
+  order_status OrderStatus
+  created_at   DateTime    @default(now())
+  updated_at   DateTime    @default(now())
+
+  @@map("orders")
 }
