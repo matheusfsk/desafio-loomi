@@ -84,3 +84,13 @@ model OrderItem {
 
   @@map("order_items")
 }
+
+model SalesReport {
+  id            Int      @id @unique @default(autoincrement())
+  period        DateTime
+  sales_amount  Decimal
+  products_sold Int
+  csv_file      String
+
+  @@map("sales_reports")
+}
