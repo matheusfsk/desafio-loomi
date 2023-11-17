@@ -50,6 +50,8 @@ model Customer {
 model Product {
   id          Int         @id @unique @default(autoincrement())
   name        String
+  category_id Int
+  category    Category    @relation(fields: [category_id], references: [id])
   description String      @db.VarChar(255)
   price       Decimal
   amount      Int
@@ -93,4 +95,12 @@ model SalesReport {
   csv_file      String
 
   @@map("sales_reports")
+}
+
+model Category {
+  id       Int       @id @unique @default(autoincrement())
+  category String
+  Product  Product[]
+
+  @@map("categories")
 }
