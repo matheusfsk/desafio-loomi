@@ -31,6 +31,7 @@ export class UpdateProductController {
           price,
           amount,
           category_id,
+          updated_at: new Date(),
         },
       });
 

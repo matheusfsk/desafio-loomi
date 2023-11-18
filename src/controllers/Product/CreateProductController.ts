@@ -20,6 +20,14 @@ export class CreateProductController {
     }: CreateProductRequest = req.body;
 
     try {
+      const categoryExists = await prisma.category.findFirst({
+        where: { id: Number(category_id) },
+      });
+
+      if (!categoryExists) {
+        return res.status(404).json({ mensagem: "Category not found." });
+      }
+
       const product = await prisma.product.create({
         data: {
           name,
