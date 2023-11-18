@@ -3,7 +3,16 @@ import { prisma } from "../../database/prismaClient";
 
 export class ListProductsController {
   async handle(req: Request, res: Response) {
-    const { name, price, amount, category_id } = req.query;
+    const {
+      name,
+      startingAmount,
+      endingAmount,
+      amount,
+      startingPrice,
+      endingPrice,
+      price,
+      category_id,
+    } = req.query;
 
     try {
       if (name) {
@@ -24,7 +33,7 @@ export class ListProductsController {
         if (priceRange.length !== 2) {
           return res
             .status(400)
-            .json({ mensagem: "Invalid price range format." });
+            .json({ message: "Invalid price range format." });
         }
 
         const minPrice = parseFloat(priceRange[0]);
@@ -38,7 +47,7 @@ export class ListProductsController {
         ) {
           return res
             .status(400)
-            .json({ mensagem: "Invalid price range values." });
+            .json({ message: "Invalid price range values." });
         }
 
         const productFilteredByPrice = await prisma.product.findMany({
@@ -47,20 +56,68 @@ export class ListProductsController {
 
         if (productFilteredByPrice.length < 1) {
           return res.status(400).json({
-            mensagem: "No products found within the specified price range.",
+            message: "No products found within the specified price range.",
           });
         }
 
         return res.status(200).json(productFilteredByPrice);
       }
 
+      /* const startingAmountValue =
+        typeof startingAmount === "string"
+          ? parseFloat(startingAmount)
+          : undefined;
+
+      const endingAmountValue =
+        typeof endingAmount === "string" ? parseFloat(endingAmount) : undefined;
+
+      const startingPriceValue =
+        typeof startingPrice === "string"
+          ? parseFloat(startingPrice)
+          : undefined;
+
+      const endingPriceValue =
+        typeof endingPrice === "string" ? parseFloat(endingPrice) : undefined;
+
+      const sA: prisma.ProductWhereInput = startingAmount
+        ? { amount: { gt: startingAmountValue } }
+        : {};
+
+      const eA: prisma.PostWhereInput = endingAmount
+        ? { amount: { lt: endingAmountValue } }
+        : {};
+
+      const a: prisma.PostWhereInput = amount ? { amount: { eq: amount } } : {};
+
+      const sP: prisma.PostWhereInput = startingPrice
+        ? { price: { gt: startingPriceValue } }
+        : {};
+
+      const eP: prisma.PostWhereInput = endingPrice
+        ? { price: { lt: endingPriceValue } }
+        : {};
+
+      const p: prisma.PostWhereInput = price ? { price: { eq: price } } : {};
+
+      const aaaa = await prisma.product.findMany({
+        where: {
+          published: true,
+          ...sA,
+          ...eA,
+          ...a,
+          ...sP,
+          ...eP,
+          ...p,
+        },
+      });
+ */
       if (amount) {
         const amountRange = amount.toString().split("-");
 
         if (amountRange.length !== 2) {
           return res
             .status(400)
-            .json({ mensagem: "Invalid amount range format." });
+            .json({ message: "Invalid amount range format." });
         }
 
         const minAmount = parseInt(amountRange[0], 10);
@@ -74,7 +131,7 @@ export class ListProductsController {
         ) {
           return res
             .status(400)
-            .json({ mensagem: "Invalid amount range values." });
+            .json({ message: "Invalid amount range values." });
         }
 
         const productFilteredByAmount = await prisma.product.findMany({
@@ -83,7 +140,7 @@ export class ListProductsController {
 
         if (productFilteredByAmount.length < 1) {
           return res.status(400).json({
-            mensagem: "No products found within the specified amount range.",
+            message: "No products found within the specified amount range.",
           });
         }
 
@@ -97,7 +154,7 @@ export class ListProductsController {
         });
 
         if (!categoryExists) {
-          return res.status(400).json({ mensagem: "Category not found." });
+          return res.status(400).json({ message: "Category not found." });
         }
 
         const productFilteredByCategory = await prisma.product.findMany({
@@ -106,7 +163,7 @@ export class ListProductsController {
 
         if (productFilteredByCategory.length < 1) {
           return res.status(400).json({
-            mensagem:
+            message:
               "There are no products registered in the specified category.",
           });
         }

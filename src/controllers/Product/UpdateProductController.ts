@@ -12,7 +12,7 @@ export class UpdateProductController {
       });
 
       if (!productExists) {
-        return res.status(404).json({ mensagem: "Product not found." });
+        return res.status(404).json({ message: "Product not found." });
       }
 
       const categoryExists = await prisma.category.findFirst({
@@ -20,7 +20,7 @@ export class UpdateProductController {
       });
 
       if (!categoryExists) {
-        return res.status(404).json({ mensagem: "Category not found." });
+        return res.status(404).json({ message: "Category not found." });
       }
 
       const updatedProduct = await prisma.product.update({

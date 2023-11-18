@@ -12,7 +12,7 @@ export class UpdateCustomerController {
       });
 
       if (!customerExists) {
-        return res.status(404).json({ mensagem: "Customer not found." });
+        return res.status(404).json({ message: "Customer not found." });
       }
 
       if (email !== customerExists.email) {
@@ -20,7 +20,7 @@ export class UpdateCustomerController {
           where: { email },
         });
         if (emailCustomerAlreadyExists) {
-          return res.status(400).json({ mensagem: "Email already exists." });
+          return res.status(400).json({ message: "Email already exists." });
         }
       }
 

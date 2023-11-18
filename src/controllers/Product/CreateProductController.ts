@@ -25,7 +25,7 @@ export class CreateProductController {
       });
 
       if (!categoryExists) {
-        return res.status(404).json({ mensagem: "Category not found." });
+        return res.status(404).json({ message: "Category not found." });
       }
 
       const product = await prisma.product.create({

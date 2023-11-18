@@ -11,7 +11,7 @@ export class DeleteProductController {
       });
 
       if (!productExists) {
-        return res.status(404).json({ mensagem: "Product not found." });
+        return res.status(404).json({ message: "Product not found." });
       }
 
       await prisma.product.delete({

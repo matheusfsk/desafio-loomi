@@ -17,7 +17,7 @@ export class ListCustomersController {
         });
         if (customerFilteredByName.length === 0) {
           return res.status(400).json({
-            mensagem: "No customers found.",
+            message: "No customers found.",
           });
         }
         return res.status(200).json(customerFilteredByName);
@@ -28,7 +28,7 @@ export class ListCustomersController {
         });
         if (!customerFilteredByEmail) {
           return res.status(400).json({
-            mensagem: "No customers found within the specified email.",
+            message: "No customers found within the specified email.",
           });
         }
 
@@ -41,7 +41,7 @@ export class ListCustomersController {
         });
         if (!customerFilteredById) {
           return res.status(400).json({
-            mensagem: "No customers found within the specified ID.",
+            message: "No customers found within the specified ID.",
           });
         }
         return res.status(200).json(customerFilteredById);

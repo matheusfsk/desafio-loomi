@@ -11,7 +11,7 @@ export class DeleteCustomerController {
       });
 
       if (!customerExists) {
-        return res.status(404).json({ mensagem: "Customer not found." });
+        return res.status(404).json({ message: "Customer not found." });
       }
 
       await prisma.customer.delete({
