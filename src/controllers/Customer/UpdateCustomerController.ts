@@ -6,6 +6,13 @@ export class UpdateCustomerController {
     const { full_name, email, contact, address, status } = req.body;
     const { id } = req.params;
 
+    if (
+      req.body.userLogin.id !== Number(id) &&
+      req.body.userLogin.user_type !== "admin"
+    ) {
+      return res.status(401).json({ message: "Unauthorized user." });
+    }
+
     try {
       const customerExists = await prisma.customer.findFirst({
         where: { id: Number(id) },
