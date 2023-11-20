@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { prisma } from "../../database/prismaClient";
 import { UserType } from "@prisma/client";
+import transporter from "../../connections/nodemailer";
+import htmlCompiler from "../../utils/htmlCompiler";
 const bcrypt = require("bcrypt");
 
 interface CreateUserRequest {
@@ -18,7 +20,6 @@ export class CreateUserController {
       const userExists = await prisma.user.findUnique({ where: { email } });
       if (userExists) {
         return res.json({
-          error: true,
           message: "Error: Email already exists.",
         });
       }
@@ -26,6 +27,21 @@ export class CreateUserController {
       const formattedName =
         name.trim().charAt(0).toUpperCase() + name.trim().slice(1);
       const hashedPassword = await bcrypt.hash(password, 10);
+
+      const emailConfirmation = await htmlCompiler(
+        "./src/templates/emailConfirmation.html",
+        {
+          user: name,
+          link: `http://localhost:3000/emailconfirmation/${email}`,
+        }
+      );
+
+      transporter.sendMail({
+        from: `E-commerce Loomi <${process.env.EMAIL_FROM}>`,
+        to: `${name} <${email}>`,
+        subject: "Confirmação de E-mail",
+        html: emailConfirmation,
+      });
 
       const newUser = await prisma.user.create({
         data: {

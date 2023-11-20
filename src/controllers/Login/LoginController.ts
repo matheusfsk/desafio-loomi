@@ -16,6 +16,16 @@ export class LoginController {
           message: "Invalid login or password.",
         });
       }
+
+      if (userLogin.email_confirmed === false) {
+        return res
+          .status(401)
+          .json({
+            message:
+              "First you must access your email and confirm your account.",
+          });
+      }
+
       const correctPassword = await bcrypt.compare(
         password,
         userLogin.password

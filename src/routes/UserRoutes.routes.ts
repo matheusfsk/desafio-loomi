@@ -16,7 +16,7 @@ const listUsers = new ListUsersController();
 const updateUser = new UpdateUserController();
 const deleteUser = new DeleteUserController();
 
-userRoutes.post("/user", createUser.handle);
+userRoutes.post("/user", isAdmin.handle, createUser.handle);
 userRoutes.get("/user", userDetails.handle);
 
 userRoutes.get("/users", isAdmin.handle, listUsers.handle);
