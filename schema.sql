@@ -22,3 +22,20 @@ VALUES
   ('Sheila Higgins','(246) 328-7356','Costa Rica','true','volutpat.nunc.sit@yahoo.org'),
   ('David Atkinson','1-883-190-1904','Canada','false','ut.lacus@icloud.net'),
   ('Mufutau Kline','1-734-506-0527','Mexico','true','nisl.quisque@google.couk');
+
+  INSERT INTO products (name, description, price, amount, category_id, image)
+  VALUES
+  ('Papel', 'Papel A4', 2.00, 50, 5, NULL),
+  ('Tesoura', 'Tesoura sem ponta', 5.00, 10, 5, NULL);
+
+  INSERT INTO orders (order_status, user_id, total)
+  VALUES
+  ('received', 20, 8.00),
+  ('received', 20, 18.00);
+
+
+  INSERT INTO order_items (order_id, product_id, amount, price, subtotal)
+  VALUES
+  (1, 1, 4, 2.00, 8.00),
+  (2, 1, 4, 2.00, 8.00),
+  (2, 2, 2, 5.00, 10.00);

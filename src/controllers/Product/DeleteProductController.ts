@@ -19,7 +19,7 @@ export class DeleteProductController {
       });
       return res.status(204).send();
     } catch (error) {
-      return res.json({ message: "Internal server error" });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 }

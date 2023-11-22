@@ -13,7 +13,7 @@ export class UserEmailConfirmController {
       });
       res.status(200).json(confirm);
     } catch (error) {
-      return res.json({ message: "Internal server error" });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 }

@@ -50,7 +50,7 @@ export class ListCustomersController {
       const customerList = await prisma.customer.findMany();
       return res.status(200).json(customerList);
     } catch (error) {
-      return res.json({ message: "Internal server error" });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 }

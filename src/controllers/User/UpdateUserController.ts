@@ -46,7 +46,7 @@ export class UpdateUserController {
 
       return res.status(201).json(updatedUser);
     } catch (error) {
-      return res.json({ message: "Internal server error" });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 }

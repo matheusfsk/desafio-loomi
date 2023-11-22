@@ -18,12 +18,9 @@ export class LoginController {
       }
 
       if (userLogin.email_confirmed === false) {
-        return res
-          .status(401)
-          .json({
-            message:
-              "First you must access your email and confirm your account.",
-          });
+        return res.status(401).json({
+          message: "First you must access your email and confirm your account.",
+        });
       }
 
       const correctPassword = await bcrypt.compare(
@@ -46,7 +43,7 @@ export class LoginController {
         token,
       });
     } catch (error) {
-      return res.json({ message: "Internal server error" });
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 }
