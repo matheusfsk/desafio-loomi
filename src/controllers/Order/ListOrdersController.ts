@@ -3,86 +3,44 @@ import { prisma } from "../../database/prismaClient";
 
 export class ListOrdersController {
   async handle(req: Request, res: Response) {
-    const { name, amount, price, category_id } = req.query;
+    const { startPeriod, endPeriod, user_id } = req.query;
 
     const filters: any = {};
 
     try {
-      if (name) {
-        filters.name = {
-          contains: `${name}`,
-          mode: "insensitive",
+      if (startPeriod && endPeriod) {
+        filters.created_at = {
+          gte: new Date(startPeriod as string),
+          lte: new Date(endPeriod as string),
         };
       }
 
-      if (price) {
-        const priceRange = price.toString().split("-");
+      if (user_id) {
+        const userId = Number(user_id);
 
-        if (priceRange.length === 2) {
-          const minPrice = parseFloat(priceRange[0]);
-          const maxPrice = parseFloat(priceRange[1]);
-
-          if (
-            !isNaN(minPrice) &&
-            !isNaN(maxPrice) &&
-            minPrice >= 0 &&
-            maxPrice >= 0
-          ) {
-            filters.price = {
-              gte: minPrice,
-              lte: maxPrice,
-            };
-          }
-        }
-      }
-
-      if (amount) {
-        const amountRange = amount.toString().split("-");
-
-        if (amountRange.length === 2) {
-          const minAmount = parseInt(amountRange[0], 10);
-          const maxAmount = parseInt(amountRange[1], 10);
-
-          if (
-            !isNaN(minAmount) &&
-            !isNaN(maxAmount) &&
-            minAmount >= 0 &&
-            maxAmount >= 0
-          ) {
-            filters.amount = {
-              gte: minAmount,
-              lte: maxAmount,
-            };
-          }
-        }
-      }
-
-      if (category_id) {
-        const categoryId = Number(category_id);
-
-        if (!isNaN(categoryId)) {
-          const categoryExists = await prisma.category.findFirst({
-            where: { id: categoryId },
+        if (!isNaN(userId)) {
+          const userExists = await prisma.user.findFirst({
+            where: { id: userId },
             select: { id: true },
           });
 
-          if (categoryExists) {
-            filters.category_id = categoryId;
+          if (userExists) {
+            filters.user_id = userId;
           }
         }
       }
 
-      const productList = await prisma.product.findMany({
+      const orderList = await prisma.order.findMany({
         where: filters,
       });
 
-      if (productList.length < 1) {
+      if (orderList.length < 1) {
         return res
           .status(400)
-          .json({ message: "No products found with the specified filters." });
+          .json({ message: "No orders found with the specified filters." });
       }
 
-      return res.status(200).json(productList);
+      return res.status(200).json(orderList);
     } catch (error) {
       console.error("Error:", error);
       return res.status(500).json({ message: "Internal server error" });
