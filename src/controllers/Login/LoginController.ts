@@ -12,13 +12,13 @@ export class LoginController {
     try {
       const userLogin = await prisma.user.findUnique({ where: { email } });
       if (!userLogin) {
-        return res.status(400).json({
+        return res.status(403).json({
           message: "Invalid login or password.",
         });
       }
 
       if (userLogin.email_confirmed === false) {
-        return res.status(401).json({
+        return res.status(406).json({
           message: "First you must access your email and confirm your account.",
         });
       }
@@ -29,7 +29,7 @@ export class LoginController {
       );
 
       if (!correctPassword) {
-        return res.status(400).json({
+        return res.status(403).json({
           message: "Invalid login or password.",
         });
       }

@@ -16,7 +16,7 @@ export class ListCustomersController {
           },
         });
         if (customerFilteredByName.length === 0) {
-          return res.status(400).json({
+          return res.status(404).json({
             message: "No customers found.",
           });
         }
@@ -27,7 +27,7 @@ export class ListCustomersController {
           where: { email: String(email) },
         });
         if (!customerFilteredByEmail) {
-          return res.status(400).json({
+          return res.status(404).json({
             message: "No customers found within the specified email.",
           });
         }
@@ -40,7 +40,7 @@ export class ListCustomersController {
           where: { id: Number(id) },
         });
         if (!customerFilteredById) {
-          return res.status(400).json({
+          return res.status(404).json({
             message: "No customers found within the specified ID.",
           });
         }

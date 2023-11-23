@@ -35,6 +35,17 @@ export class PaymentController {
 
       let amountInStock = 0;
 
+      const checkStatus = await prisma.order.findUnique({
+        where: { id: Number(orderId) },
+        select: { order_status: true },
+      });
+
+      if (checkStatus?.order_status === "in_preparation") {
+        return res
+          .status(400)
+          .json({ message: "The order is already in_preparation" });
+      }
+
       if (payment === "confirm") {
         await prisma.order.update({
           where: { id: Number(orderId) },
@@ -59,10 +70,12 @@ export class PaymentController {
           });
         }
 
-        return res.status(201).json({ message: "Payment confirmed." });
+        return res.status(200).json({ message: "Payment confirmed." });
+      } else if (payment === "deny") {
+        return res.status(200).json({ message: "Payment denied." });
       }
 
-      return res.status(201).json({ message: "Error on payment." });
+      return res.status(400).json({ message: "Error on payment." });
     } catch (error) {
       return res.status(500).json({ message: "Internal server error" });
     }

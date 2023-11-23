@@ -27,7 +27,7 @@ export class UpdateCustomerController {
           where: { email },
         });
         if (emailCustomerAlreadyExists) {
-          return res.status(400).json({ message: "Email already exists." });
+          return res.status(406).json({ message: "Email already exists." });
         }
       }
 

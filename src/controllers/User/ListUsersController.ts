@@ -16,7 +16,7 @@ export class ListUsersController {
           },
         });
         if (userFilteredByName.length === 0) {
-          return res.status(400).json({
+          return res.status(404).json({
             message: "No users found.",
           });
         }
@@ -27,7 +27,7 @@ export class ListUsersController {
           where: { email: String(email) },
         });
         if (!userFilteredByEmail) {
-          return res.status(400).json({
+          return res.status(404).json({
             message: "No users found within the specified email.",
           });
         }
@@ -40,7 +40,7 @@ export class ListUsersController {
           where: { id: Number(id) },
         });
         if (!userFilteredById) {
-          return res.status(400).json({
+          return res.status(404).json({
             message: "No users found within the specified ID.",
           });
         }

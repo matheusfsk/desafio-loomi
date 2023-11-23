@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { prisma } from "../../database/prismaClient";
+const { deleteFile } = require("../../utils/storage");
 
 export class DeleteProductController {
   async handle(req: Request, res: Response) {
@@ -12,6 +13,14 @@ export class DeleteProductController {
 
       if (!productExists) {
         return res.status(404).json({ message: "Product not found." });
+      }
+
+      const path = productExists.image?.slice(
+        productExists.image?.indexOf("imagens")
+      );
+
+      if (productExists.image) {
+        await deleteFile(path);
       }
 
       await prisma.product.delete({

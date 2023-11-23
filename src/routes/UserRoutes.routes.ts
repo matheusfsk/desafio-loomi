@@ -24,7 +24,7 @@ userRoutes.post(
   ValidateRequestBody(schemaUser),
   createUser.handle
 );
-userRoutes.get("/users/:id", userDetails.handle);
+userRoutes.get("/users/:id", isAdmin.handle, userDetails.handle);
 
 userRoutes.get("/users", isAdmin.handle, listUsers.handle);
 userRoutes.delete("/users/:id", isAdmin.handle, deleteUser.handle);

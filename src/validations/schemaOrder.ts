@@ -1,39 +1,31 @@
-/* import joi from "joi";
+import joi from "joi";
 
-const schemaPedidoProduto = joi.object({
-  produto_id: joi.number().integer().positive().required().messages({
-    "any.required": "O campo produto_id é obrigatório",
-    "number.integer": "O campo produto_id deve ser um número inteiro",
-    "number.positive": "O campo produto_id deve ser um número positivo",
-  }),
-
-  quantidade_produto: joi.number().integer().positive().required().messages({
-    "any.required": "O campo quantidade_produto é obrigatório",
-    "number.integer": "O campo quantidade_produto deve ser um número inteiro",
-    "number.positive": "O campo quantidade_produto deve ser um número positivo",
-  }),
-});
-
-const schemaPedido = joi.object({
-  cliente_id: joi.number().integer().positive().required().messages({
-    "any.required": "O campo cliente_id é obrigatório",
-    "number.integer": "O campo cliente_id deve ser um número inteiro",
-    "number.positive": "O campo cliente_id deve ser um número positivo",
-  }),
-
-  observacao: joi.string().allow(""),
-
-  pedido_produtos: joi
+const schemaOrder = joi.object({
+  order_items: joi
     .array()
-    .items(schemaPedidoProduto)
-    .min(1)
     .required()
     .messages({
       "any.required":
-        "O campo pedido_produtos é obrigatório e deve conter pelo menos um item",
-      "array.min": "O pedido deve receber ao menos um produto.",
+        "Array order_items field is required with product_id and amount.",
+      "array.empty":
+        "Array order_items field is required with product_id and amount.",
+      "array.base": "The order_items field must be filled with object array",
+    })
+    .items({
+      product_id: joi.number().required().messages({
+        "any.required": "The product_id field is required",
+        "number.empty": "The product_id field is required",
+        "number.base": "The product_id field must be filled with number",
+      }),
+
+      amount: joi.number().required().messages({
+        "any.required": "The amount field is required",
+        "number.empty": "The amount field is required",
+        "number.base": "The amount field must be filled with number",
+      }),
     }),
+
+  userLogin: joi.allow(""),
 });
 
-module.exports = schemaPedido;
- */
+export default schemaOrder;
