@@ -30,9 +30,8 @@ export const generateSalesReport = async (
     product_name
 `;
 
-    // Gerar o arquivo CSV
     const csvWriter = createObjectCsvWriter({
-      path: "path/to/report.csv", // Substitua isso pelo caminho desejado
+      path: "path/to/report.csv",
       header: [
         { id: "product_name", title: "Product" },
         { id: "amount", title: "Quantity" },
@@ -49,7 +48,6 @@ export const generateSalesReport = async (
 
     await csvWriter.writeRecords(records);
 
-    // Salvar os detalhes do relatório no banco de dados
     const reportPath = 'path/to/report.csv'; // Substitua isso pelo caminho real
     await prisma.salesReport.create({
       data: {
