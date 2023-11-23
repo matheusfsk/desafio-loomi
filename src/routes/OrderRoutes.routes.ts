@@ -1,3 +1,4 @@
+import { ListOrdersController } from "./../controllers/Order/ListOrdersController";
 import { Router } from "express";
 import PaymentController from "./../controllers/Order/PaymentController";
 import CreateOrderController from "../controllers/Order/CreateOrderController";
@@ -17,11 +18,13 @@ const updateOrderItem = new UpdateOrderItemController();
 const deleteOrder = new DeleteOrderController();
 const updateStatusOrder = new UpdateStatusOrderController();
 const paymentController = new PaymentController();
+const listOrdersController = new ListOrdersController();
 
 orderRoutes.post("/orders", createOrder.handle);
 orderRoutes.put("/orders/:orderId", updateOrderItem.handle);
 orderRoutes.put("/payment/:orderId", isAdmin.handle, paymentController.handle);
 orderRoutes.patch("/orders/:orderId", isAdmin.handle, updateStatusOrder.handle);
 orderRoutes.delete("/orders/:orderId", isAdmin.handle, deleteOrder.handle);
+orderRoutes.get("/orders", isAdmin.handle, listOrdersController.handle);
 
 export { orderRoutes };
