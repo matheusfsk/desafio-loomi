@@ -47,7 +47,7 @@ orderRoutes.patch(
   updateStatusOrder.handle
 );
 orderRoutes.delete("/orders/:orderId", isAdmin.handle, deleteOrder.handle);
-orderRoutes.get("/orders", isAdmin.handle, listOrdersController.handle);
-orderRoutes.get("/orders/:id", isAdmin.handle, orderDetailsController.handle);
+orderRoutes.get("/orders", listOrdersController.handle);
+orderRoutes.get("/orders/:orderId", orderDetailsController.handle);
 
 export { orderRoutes };

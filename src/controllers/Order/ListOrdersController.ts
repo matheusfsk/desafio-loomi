@@ -4,6 +4,9 @@ import { prisma } from "../../database/prismaClient";
 export class ListOrdersController {
   async handle(req: Request, res: Response) {
     const { startPeriod, endPeriod, user_id } = req.query;
+    const {
+      userLogin: { id, user_type },
+    } = req.body;
 
     const filters: any = {};
 
@@ -17,6 +20,21 @@ export class ListOrdersController {
 
       if (user_id) {
         const userId = Number(user_id);
+
+        if (!isNaN(userId)) {
+          const userExists = await prisma.user.findFirst({
+            where: { id: userId },
+            select: { id: true },
+          });
+
+          if (userExists) {
+            filters.user_id = userId;
+          }
+        }
+      }
+
+      if (user_type === "customer") {
+        const userId = Number(id);
 
         if (!isNaN(userId)) {
           const userExists = await prisma.user.findFirst({

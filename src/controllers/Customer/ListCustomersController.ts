@@ -5,51 +5,48 @@ export class ListCustomersController {
   async handle(req: Request, res: Response) {
     const { name, email, id } = req.query;
 
+    const filters: any = {};
+
     try {
       if (name) {
-        const customerFilteredByName = await prisma.customer.findMany({
-          where: {
-            full_name: {
-              contains: `${name}`,
-              mode: "insensitive",
-            },
-          },
-        });
-        if (customerFilteredByName.length === 0) {
-          return res.status(404).json({
-            message: "No customers found.",
-          });
-        }
-        return res.status(200).json(customerFilteredByName);
+        filters.full_name = {
+          contains: String(name),
+          mode: "insensitive",
+        };
       }
-      if (email) {
-        const customerFilteredByEmail = await prisma.customer.findFirst({
-          where: { email: String(email) },
-        });
-        if (!customerFilteredByEmail) {
-          return res.status(404).json({
-            message: "No customers found within the specified email.",
-          });
-        }
 
-        return res.status(200).json(customerFilteredByEmail);
+      if (email) {
+        filters.email = {
+          startsWith: String(email),
+          mode: "insensitive",
+        };
       }
 
       if (id) {
-        const customerFilteredById = await prisma.customer.findUnique({
-          where: { id: Number(id) },
-        });
-        if (!customerFilteredById) {
-          return res.status(404).json({
-            message: "No customers found within the specified ID.",
-          });
+        const customerId = Number(id);
+
+        if (!isNaN(customerId)) {
+          filters.id = customerId;
         }
-        return res.status(200).json(customerFilteredById);
       }
 
-      const customerList = await prisma.customer.findMany();
+      const customerList = await prisma.customer.findMany({
+        where: filters,
+      });
+
+      if (customerList.length === 0) {
+        return res.status(404).json({
+          message: "No customers found with the specified filters.",
+        });
+      }
+
+      if (id && customerList.length === 1) {
+        return res.status(200).json(customerList[0]);
+      }
+
       return res.status(200).json(customerList);
     } catch (error) {
+      console.error("Error:", error);
       return res.status(500).json({ message: "Internal server error" });
     }
   }

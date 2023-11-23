@@ -28,7 +28,7 @@ productRoutes.post(
   createProduct.handle
 );
 productRoutes.get("/products", listProducts.handle);
-productRoutes.get("/products/:id", isAdmin.handle, productDetails.handle);
+productRoutes.get("/products/:id", productDetails.handle);
 productRoutes.delete("/products/:id", isAdmin.handle, deleteProduct.handle);
 productRoutes.put(
   "/products/:id",

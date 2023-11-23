@@ -4,8 +4,9 @@ const bcrypt = require("bcrypt");
 
 export class UpdateUserController {
   async handle(req: Request, res: Response) {
-    const { name, email, password } = req.body;
+    const { name, email, password, user_type } = req.body;
     const { id } = req.params;
+    const { user_type: typeUserLogged } = req.body.userLogin;
 
     if (
       req.body.userLogin.id !== Number(id) &&
@@ -34,11 +35,18 @@ export class UpdateUserController {
         }
       }
 
+      if (typeUserLogged === "customer" && user_type === "admin") {
+        return res.status(400).json({
+          message: "If you are a customer, you cannot change your user_type",
+        });
+      }
+
       const updatedUser = await prisma.user.update({
         where: { id: Number(id) },
         data: {
           name,
           email,
+          user_type,
           password: hashedPassword,
           updated_at: new Date(),
         },

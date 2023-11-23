@@ -15,6 +15,17 @@ export class DeleteProductController {
         return res.status(404).json({ message: "Product not found." });
       }
 
+      const productInOrder = await prisma.orderItem.findFirst({
+        where: { product_id: Number(id) },
+      });
+
+      if (productInOrder) {
+        return res.status(400).json({
+          message:
+            "This product is associated with existing orders and cannot be deleted.",
+        });
+      }
+
       const path = productExists.image?.slice(
         productExists.image?.indexOf("imagens")
       );
@@ -26,10 +37,13 @@ export class DeleteProductController {
       await prisma.product.delete({
         where: { id: Number(id) },
       });
+
       return res.status(204).send();
     } catch (error) {
+      console.error(error);
       return res.status(500).json({ message: "Internal server error" });
     }
   }
 }
+
 export default DeleteProductController;

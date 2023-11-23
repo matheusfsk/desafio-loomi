@@ -18,8 +18,11 @@ export class UpdateOrderItemController {
   async handle(req: Request, res: Response) {
     const {
       order_items,
-      userLogin: { id },
-    }: { order_items: OrderItem[]; userLogin: { id: number } } = req.body;
+      userLogin: { id, user_type },
+    }: {
+      order_items: OrderItem[];
+      userLogin: { id: number; user_type: string };
+    } = req.body;
 
     const { orderId } = req.params;
 
@@ -27,9 +30,17 @@ export class UpdateOrderItemController {
       const orderExists = await prisma.order.findUnique({
         where: { id: Number(orderId) },
       });
+
       if (!orderExists) {
         return res.status(404).json({
-          message: "Erro: Order not found.",
+          message: "Error: Order not found.",
+        });
+      }
+
+      if (orderExists.user_id !== id && user_type === "customer") {
+        return res.status(401).json({
+          message:
+            "This order you are trying to change is not yours, search for your order and try again",
         });
       }
 
@@ -56,26 +67,12 @@ export class UpdateOrderItemController {
           .json({ message: "One or more products were not found." });
       }
 
-      let i = 0;
-
-      for (const product of productsInStock) {
-        const { amount } = product;
-        if (amount < order_items[i].amount) {
-          return res
-            .status(400)
-            .json({ message: "Product not in sufficient stock." });
-        }
-        i++;
-      }
-
       const insertOrder = await prisma.$transaction(async (transaction) => {
         let total = 0;
-        let productSubTotal = 0;
 
         await transaction.order.update({
           where: { id: Number(orderId) },
           data: {
-            user_id: id,
             total: 0,
             order_status: "received",
             updated_at: new Date(),
@@ -85,33 +82,54 @@ export class UpdateOrderItemController {
         for (const productOrder of order_items) {
           const { product_id, amount } = productOrder;
 
-          const orderItem = await prisma.orderItem.findFirstOrThrow({
+          const existingOrderItem = await transaction.orderItem.findFirst({
             where: { product_id: product_id, order_id: Number(orderId) },
-            select: {
-              id: true,
-            },
           });
 
-          const findPrice = await transaction.product.findUnique({
-            where: { id: product_id },
-            select: {
-              price: true,
-            },
-          });
+          if (existingOrderItem) {
+            const findPrice = await transaction.product.findUnique({
+              where: { id: product_id },
+              select: {
+                price: true,
+              },
+            });
 
-          const price = findPrice?.price ?? 0;
-          productSubTotal = amount * Number(price);
+            const price = findPrice?.price ?? 0;
+            const productSubTotal = amount * Number(price);
 
-          await transaction.orderItem.update({
-            where: { id: orderItem.id, order_id: Number(orderId) },
-            data: {
-              amount,
-              price,
-              subtotal: productSubTotal,
-            },
-          });
+            await transaction.orderItem.update({
+              where: { id: existingOrderItem.id, order_id: Number(orderId) },
+              data: {
+                amount,
+                price,
+                subtotal: productSubTotal,
+              },
+            });
 
-          total += productSubTotal;
+            total += productSubTotal;
+          } else {
+            const findPrice = await transaction.product.findUnique({
+              where: { id: product_id },
+              select: {
+                price: true,
+              },
+            });
+
+            const price = findPrice?.price ?? 0;
+            const productSubTotal = amount * Number(price);
+
+            await transaction.orderItem.create({
+              data: {
+                order_id: Number(orderId),
+                product_id,
+                amount,
+                price,
+                subtotal: productSubTotal,
+              },
+            });
+
+            total += productSubTotal;
+          }
         }
 
         await transaction.order.update({
@@ -124,6 +142,7 @@ export class UpdateOrderItemController {
 
       return res.status(201).json(insertOrder);
     } catch (error) {
+      console.log(error);
       return res.status(500).json({ message: "Internal server error" });
     }
   }
