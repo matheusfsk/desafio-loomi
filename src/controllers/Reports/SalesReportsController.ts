@@ -33,7 +33,9 @@ export class GenerateReports {
 
       res.json({ pathCSV: reportPath });
     } catch (error) {
-      res.status(500).json({ error: "Error generating the report" });
+      res
+        .status(500)
+        .json({ error: "Error generating the report on controller" });
     }
   }
 }
