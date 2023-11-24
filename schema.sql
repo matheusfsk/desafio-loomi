@@ -39,3 +39,8 @@ VALUES
   (1, 1, 4, 2.00, 8.00),
   (2, 1, 4, 2.00, 8.00),
   (2, 2, 2, 5.00, 10.00);
+
+  INSERT INTO users (name, email, password, user_type, email_confirmed)
+  VALUES
+  ('Cadu Admin', 'caduadmin@email.com', '123123abc', 'admin', true),
+  ('Cadu Cliente', 'caducliente@email.com', '123123abc', 'customer', true);
